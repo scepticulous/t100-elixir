@@ -7,9 +7,15 @@ defmodule ElixirMessengerBotWeb.WebhookController do
   action_fallback ElixirMessengerBotWeb.FallbackController
 
   def callback(conn, params) do
+    IO.puts "------ params --------"
     IO.inspect(params)
-    webhook = []
-    render(conn, "index.json", webhook: webhook)
+    IO.puts "------ end of params --------"
+
+    data =  %{"hub.challenge" => params["hub.challenge"], "hub.mode" => params["hub.mode"],
+     "hub.verify_token" => params["hub.verify_token"]}
+
+    IO.inspect(data)
+    render(conn, "callback.json", data)
   end
 
   # def create(conn, %{"webhook" => webhook_params}) do
