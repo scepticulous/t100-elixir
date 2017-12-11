@@ -6,16 +6,110 @@ defmodule ElixirMessengerBotWeb.WebhookController do
 
   action_fallback ElixirMessengerBotWeb.FallbackController
 
+  # def callback(conn,  %{"hub.challenge" => challenge,  "hub.mode" => mode, "hub.verify_token" => verify_token} = params) do
   def callback(conn, params) do
-    IO.puts "------ params --------"
+    challenge = params["hub.challenge"]
+    mode      = params["hub.mode"]
+    token     = params["hub.verify_token"]
+    signature = params["x-hub-signature"]
+
+    IO.puts "------ callback params --------"
     IO.inspect(params)
-    IO.puts "------ end of params --------"
+    IO.puts "------ end of it all --------"
 
-    data =  %{"hub.challenge" => params["hub.challenge"], "hub.mode" => params["hub.mode"],
-     "hub.verify_token" => params["hub.verify_token"]}
+    IO.inspect(challenge)
+    # render(conn, "callback.json", data)
+    conn
+    |> send_resp(200, challenge)
+  end
 
+  """
+  2017-12-11T12:18:57.187987+00:00 app[web.1]: %{"entry" => [%{"id" => "381841192148151",
+2017-12-11T12:18:57.187989+00:00 app[web.1]:      "messaging" => [%{"message" => %{"mid" => "mid.$cAAEBu8xCQlVmdsjQRlgRYOIG2Eua",
+2017-12-11T12:18:57.187989+00:00 app[web.1]:           "seq" => 27023, "text" => "hi bot"},
+2017-12-11T12:18:57.187990+00:00 app[web.1]:         "recipient" => %{"id" => "381841192148151"},
+2017-12-11T12:18:57.187990+00:00 app[web.1]:         "sender" => %{"id" => "1306737552689882"},
+2017-12-11T12:18:57.187991+00:00 app[web.1]:         "timestamp" => 1512994736198}], "time" => 1512994736963}],
+2017-12-11T12:18:57.187991+00:00 app[web.1]:   "object" => "page"}
+
+
+  2017-12-11T12:18:53.704532+00:00 app[web.1]: %{"entry" => [%{"id" => "381841192148151",
+2017-12-11T12:18:53.704534+00:00 app[web.1]:      "messaging" => [%{"read" => %{"seq" => 0, "watermark" => 1512994540824},
+2017-12-11T12:18:53.704535+00:00 app[web.1]:         "recipient" => %{"id" => "381841192148151"},
+2017-12-11T12:18:53.704536+00:00 app[web.1]:         "sender" => %{"id" => "1306737552689882"},
+2017-12-11T12:18:53.704536+00:00 app[web.1]:         "timestamp" => 1512994733455}], "time" => 1512994733490}],
+2017-12-11T12:18:53.704537+00:00 app[web.1]:   "object" => "page"}
+  """
+  def process(conn, params) do
+    challenge = params["hub.challenge"]
+    mode      = params["hub.mode"]
+    token     = params["hub.verify_token"]
+    signature = params["x-hub-signature"]
+
+    %{"entry" => entry, "object" => object} = params
+
+    IO.inspect(entry)
+    %{"text" => text, "sender" => sender, "recipient" => recipient } = parse_entry(List.first(entry))
+
+    IO.puts "------ webhook params --------"
+    IO.inspect(params)
+    IO.puts "------ text --------"
+    IO.inspect(text)
+    IO.puts "------ end of it all --------"
+    HTTPotion.get("www.google.com")
+
+    conn
+    |> send_resp(200, "")
+  end
+
+  defp parse_entry(%{"id" => id, "messaging" => [%{ "message" => message, "sender" => sender, "recipient" => recipient}]} = entry) do
+    IO.puts "received message object"
+    IO.inspect(message)
+    %{"mid" => mid, "seq" => seq, "text" => text} = message
+
+    parsed = %{"text" => text, "sender" => sender, "recipient" => recipient }
+
+    IO.puts("text is #{text}")
+    IO.inspect(parsed)
+
+    send_echo(text, sender)
+
+    parsed
+  end
+
+  defp parse_entry(entry) do
+    IO.puts "received unknown entry"
+    nil
+  end
+
+  """
+  Facebook reference example:
+
+  curl -X POST -H "Content-Type: application/json" -d '{
+  "recipient":{
+    "id":"<PSID>"
+  },
+  "message":{
+    "text":"hello, world!"
+  }
+  }' "https://graph.facebook.com/v2.6/me/messages?access_token=<PAGE_ACCESS_TOKEN>"
+"""
+  defp send_echo(text, psid) do
+    page_access_token = System.get_env("FB_PAGE_ACCESS_TOKEN")
+    host = "https://graph.facebook.com/v2.6/me/messages?access_token=#{page_access_token}"
+
+    data = %{
+      "recipient" => psid,
+      "message"   => %{"text" => "you just said: #{text}" }
+    }
+    body = data |> Poison.encode!
+    headers = ["Accept": "application/json", "Content-Type": "application/json"]
+
+    IO.puts "sending this data:"
     IO.inspect(data)
-    render(conn, "callback.json", data)
+    resp = HTTPotion.post(host, [body: body, headers: headers])
+    IO.puts "sent echo to messenger"
+    IO.inspect(resp)
   end
 
   # def create(conn, %{"webhook" => webhook_params}) do

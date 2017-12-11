@@ -2,10 +2,9 @@ defmodule ElixirMessengerBotWeb.WebhookView do
   use ElixirMessengerBotWeb, :view
   alias ElixirMessengerBotWeb.WebhookView
 
-  def render("callback.json", data) do
-    IO.inspect(data["hub.challenge"])
-
-    %{ value: data["hub.challenge"] }
+  def render("callback.json", %{"hub.challenge" => challenge}) do
+    IO.inspect(challenge)
+    %{ value: challenge }
   end
 
   def render("index.json", %{webhook: webhook}) do

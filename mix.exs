@@ -20,7 +20,7 @@ defmodule ElixirMessengerBot.Mixfile do
   def application do
     [
       mod: {ElixirMessengerBot.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :httpotion]
     ]
   end
 
@@ -38,7 +38,8 @@ defmodule ElixirMessengerBot.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:httpotion, "~> 3.0.2"}
     ]
   end
 

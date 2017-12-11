@@ -9,6 +9,7 @@ defmodule ElixirMessengerBotWeb.Router do
     pipe_through :api
 
     get "/webhook/callback", WebhookController, :callback
+    post "/webhook/callback", WebhookController, :process
     # resources "/webhook", WebhookController, except: [:new, :edit]
   end
 end
