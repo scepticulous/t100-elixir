@@ -100,7 +100,7 @@ defmodule ElixirMessengerBotWeb.WebhookController do
 
     data = %{
       "recipient" => psid,
-      "message"   => %{"text" => "you just said: #{text}" }
+      "message"   => %{"text" => "You said: #{text}. I say: no chocolate today." }
     }
     body = data |> Poison.encode!
     headers = ["Accept": "application/json", "Content-Type": "application/json"]
@@ -109,7 +109,24 @@ defmodule ElixirMessengerBotWeb.WebhookController do
     IO.inspect(data)
     resp = HTTPotion.post(host, [body: body, headers: headers])
     IO.puts "sent echo to messenger"
+
+    # send_tweet("@schokotron chocolate please: #{text}")
     IO.inspect(resp)
+  end
+
+
+  defp send_tweet(message) do
+    ExTwitter.configure(
+      consumer_key: System.get_env("TWITTER_CONSUMER_KEY"),
+      consumer_secret: System.get_env("TWITTER_CONSUMER_SECRET"),
+      access_token: System.get_env("TWITTER_ACCESS_TOKEN"),
+      access_token_secret: System.get_env("TWITTER_ACCESS_SECRET")
+    )
+
+    resp = ExTwitter.update(message)
+    IO.puts "twitter returned: "
+    IO.inspect(resp)
+    resp
   end
 
   # def create(conn, %{"webhook" => webhook_params}) do
