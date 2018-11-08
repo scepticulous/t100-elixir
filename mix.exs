@@ -41,7 +41,7 @@ defmodule ElixirMessengerBot.Mixfile do
       {:cowboy, "~> 1.0"},
       {:oauther, "~> 1.1"},
       {:extwitter, "~> 0.8"},
-      {:httpotion, "~> 3.0.2"}
+      {:httpotion, "~> 3.1.0"}
     ]
   end
 
