@@ -37,11 +37,12 @@ defmodule ElixirMessengerBot.Mixfile do
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 3.2"},
       {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.11"},
+      {:gettext, "~> 0.16"},
       {:cowboy, "~> 1.0"},
-      {:oauther, "~> 1.1"},
-      {:extwitter, "~> 0.8"},
-      {:httpotion, "~> 3.0.2"}
+      {:oauther, "~> 1.1.1"},
+      {:extwitter, "~> 0.9.3"},
+      {:httpotion, "~> 3.1.0"},
+      {:slack, "~> 0.14.0"}
     ]
   end
 
