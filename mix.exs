@@ -40,7 +40,7 @@ defmodule ElixirMessengerBot.Mixfile do
       {:gettext, "~> 0.16"},
       {:cowboy, "~> 1.0"},
       {:oauther, "~> 1.1.1"},
-      {:extwitter, "~> 0.9.3"},
+      {:extwitter, "~> 0.10.0"},
       {:httpotion, "~> 3.1.0"},
       {:slack, "~> 0.15.0"}
     ]
