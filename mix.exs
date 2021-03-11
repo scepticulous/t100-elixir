@@ -35,7 +35,7 @@ defmodule ElixirMessengerBot.Mixfile do
     [
       {:phoenix, "~> 1.3.0"},
       {:phoenix_pubsub, "~> 1.0"},
-      {:phoenix_ecto, "~> 3.2"},
+      {:phoenix_ecto, "~> 4.2"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.16"},
       {:cowboy, "~> 1.0"},
